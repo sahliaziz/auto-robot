@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Robot Control</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+  <header>
+    <h1>Robot Control</h1>
+    <div id="status" class="status disconnected">Disconnected</div>
+    <div id="distance" class="badge">Sonar: --cm</div>
+  </header>
+
+  <main>
+
+    <section class="feeds">
+      <div class="feed-panel">
+        <div class="panel-title">Camera</div>
+        <img id="camera-feed" src="/camera" alt="Camera feed">
+      </div>
+      <div class="feed-panel">
+        <div class="panel-title">Lidar</div>
+        <canvas id="lidar-canvas" width="480" height="480"></canvas>
+      </div>
+    </section>
+
+    <section class="controls">
+
+      <!-- D-pad -->
+      <div class="dpad">
+        <button class="dpad-btn" data-cmd="forward"   style="grid-area:up">▲</button>
+        <button class="dpad-btn" data-cmd="left"      style="grid-area:left">◀</button>
+        <button class="dpad-btn dpad-stop" data-cmd="stop" style="grid-area:mid">■</button>
+        <button class="dpad-btn" data-cmd="right"     style="grid-area:right">▶</button>
+        <button class="dpad-btn" data-cmd="backward"  style="grid-area:down">▼</button>
+      </div>
+
+      <!-- Autonomous actions -->
+      <div class="actions">
+        <div class="actions-title">Autonomous</div>
+        <button class="action-btn" data-action="AVANCER">Forward 1m</button>
+        <button class="action-btn" data-action="RECULER">Backward 1m</button>
+        <button class="action-btn" data-action="TOURNER_G">Turn Left 90°</button>
+        <button class="action-btn" data-action="TOURNER_D">Turn Right 90°</button>
+        <button class="action-btn" data-action="CONTOURNER_G">Bypass Left</button>
+        <button class="action-btn" data-action="CONTOURNER_D">Bypass Right</button>
+      </div>
+
+    </section>
+
+  </main>
+
+  <script src="app.js"></script>
+</body>
+</html>

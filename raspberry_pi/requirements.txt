@@ -1,0 +1,5 @@
+fastapi
+uvicorn[standard]
+pyserial
+rplidar-roboticia
+picamera2

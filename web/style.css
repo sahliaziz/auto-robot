@@ -1,0 +1,180 @@
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+  --bg:       #0f0f0f;
+  --surface:  #1a1a1a;
+  --border:   #2e2e2e;
+  --text:     #e0e0e0;
+  --muted:    #666;
+  --green:    #4caf50;
+  --red:      #f44336;
+}
+
+body {
+  font-family: system-ui, -apple-system, sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+/* ── Header ──────────────────────────────────────────────────────────────── */
+
+header {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.75rem 1.25rem;
+  background: var(--surface);
+  border-bottom: 1px solid var(--border);
+}
+
+header h1 { font-size: 1rem; font-weight: 600; letter-spacing: 0.03em; }
+
+.status {
+  font-size: 0.75rem;
+  font-weight: 500;
+  padding: 0.2rem 0.65rem;
+  border-radius: 999px;
+}
+.status.connected    { background: #1b3a1b; color: var(--green); }
+.status.disconnected { background: #3a1b1b; color: var(--red); }
+
+.badge {
+  margin-left: auto;
+  font-size: 0.75rem;
+  color: var(--muted);
+  font-variant-numeric: tabular-nums;
+}
+
+/* ── Main ────────────────────────────────────────────────────────────────── */
+
+main {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  padding: 1rem;
+}
+
+/* ── Feeds ───────────────────────────────────────────────────────────────── */
+
+.feeds {
+  display: flex;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+
+.feed-panel {
+  flex: 1 1 300px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  overflow: hidden;
+}
+
+.panel-title {
+  padding: 0.35rem 0.8rem;
+  font-size: 0.7rem;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--muted);
+  background: #222;
+  border-bottom: 1px solid var(--border);
+}
+
+.feed-panel img {
+  display: block;
+  width: 100%;
+  height: auto;
+  background: #000;
+}
+
+#lidar-canvas {
+  display: block;
+  width: 100%;
+  height: auto;
+  background: #050505;
+}
+
+/* ── Controls ────────────────────────────────────────────────────────────── */
+
+.controls {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 2rem;
+  align-items: center;
+  justify-content: center;
+  padding: 0.5rem;
+}
+
+/* D-pad */
+.dpad {
+  display: grid;
+  grid-template-areas:
+    ".    up    ."
+    "left mid  right"
+    ".    down  .";
+  gap: 5px;
+}
+
+.dpad-btn {
+  width: 68px;
+  height: 68px;
+  font-size: 1.3rem;
+  background: #252525;
+  color: var(--text);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  cursor: pointer;
+  user-select: none;
+  touch-action: none;
+  transition: background 80ms, border-color 80ms, transform 80ms;
+}
+
+.dpad-btn:active,
+.dpad-btn.pressed {
+  background: #1e3d1e;
+  border-color: var(--green);
+  transform: scale(0.94);
+}
+
+.dpad-stop { background: #2e1a1a; font-size: 1rem; }
+.dpad-stop:active,
+.dpad-stop.pressed {
+  background: #5a1a1a;
+  border-color: var(--red);
+}
+
+/* Autonomous action buttons */
+.actions {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.actions-title {
+  font-size: 0.7rem;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--muted);
+  margin-bottom: 2px;
+}
+
+.action-btn {
+  padding: 0.45rem 1rem;
+  background: #202020;
+  color: var(--text);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 0.82rem;
+  text-align: left;
+  transition: background 80ms, border-color 80ms;
+}
+
+.action-btn:hover  { background: #2a2a2a; border-color: #444; }
+.action-btn:active { background: #1e3d1e; border-color: var(--green); }
