@@ -24,3 +24,6 @@ Thumbs.db
 
 # Claude Code internal
 .claude/
+
+# Tests
+test_*
