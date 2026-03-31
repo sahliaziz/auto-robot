@@ -9,47 +9,90 @@
 <body>
 
   <header>
-    <h1>Robot Control</h1>
-    <div id="status" class="status disconnected">Disconnected</div>
-    <div id="distance" class="badge">Sonar: --cm</div>
+    <div class="logo">
+      <div class="logo-mark">RC</div>
+      <h1>Robot Control</h1>
+    </div>
+    <div class="header-meta">
+      <div id="distance" class="badge">SONAR&nbsp;&nbsp;--&nbsp;cm</div>
+      <div id="status" class="status disconnected">
+        <span class="status-dot"></span>
+        <span id="status-label">Disconnected</span>
+      </div>
+    </div>
   </header>
+
+  <aside class="sidebar">
+
+    <!-- Manual D-pad -->
+    <div class="panel">
+      <div class="panel-header">
+        <span class="panel-label">Manual Drive</span>
+      </div>
+      <div class="dpad-wrap">
+        <div class="dpad">
+          <button class="dpad-btn" data-cmd="forward"  style="grid-area:up"   >▲</button>
+          <button class="dpad-btn" data-cmd="left"     style="grid-area:left" >◀</button>
+          <button class="dpad-btn dpad-stop" data-cmd="stop" style="grid-area:mid">STOP</button>
+          <button class="dpad-btn" data-cmd="right"    style="grid-area:right">▶</button>
+          <button class="dpad-btn" data-cmd="backward" style="grid-area:down" >▼</button>
+        </div>
+        <div class="dpad-meta">WASD / arrow keys supported</div>
+      </div>
+    </div>
+
+    <!-- Autonomous actions -->
+    <div class="panel">
+      <div class="panel-header">
+        <span class="panel-label">Autonomous</span>
+      </div>
+      <div class="panel-body">
+        <div class="action-list">
+          <button class="action-btn" data-action="AVANCER">
+            <span class="action-icon">↑</span> Forward 1 m
+          </button>
+          <button class="action-btn" data-action="RECULER">
+            <span class="action-icon">↓</span> Backward 1 m
+          </button>
+          <button class="action-btn" data-action="TOURNER_G">
+            <span class="action-icon">↺</span> Turn Left 90°
+          </button>
+          <button class="action-btn" data-action="TOURNER_D">
+            <span class="action-icon">↻</span> Turn Right 90°
+          </button>
+          <button class="action-btn" data-action="CONTOURNER_G">
+            <span class="action-icon">⤺</span> Bypass Left
+          </button>
+          <button class="action-btn" data-action="CONTOURNER_D">
+            <span class="action-icon">⤻</span> Bypass Right
+          </button>
+        </div>
+      </div>
+    </div>
+
+  </aside>
 
   <main>
 
-    <section class="feeds">
-      <div class="feed-panel">
-        <div class="panel-title">Camera</div>
+    <div class="feed-panel">
+      <div class="feed-header">
+        <span class="feed-title">Camera</span>
+        <span class="feed-pill">LIVE</span>
+      </div>
+      <div class="feed-body">
         <img id="camera-feed" src="/camera" alt="Camera feed">
       </div>
-      <div class="feed-panel">
-        <div class="panel-title">Lidar</div>
+    </div>
+
+    <div class="feed-panel">
+      <div class="feed-header">
+        <span class="feed-title">Lidar</span>
+        <span class="feed-pill">LIVE</span>
+      </div>
+      <div class="feed-body">
         <canvas id="lidar-canvas" width="480" height="480"></canvas>
       </div>
-    </section>
-
-    <section class="controls">
-
-      <!-- D-pad -->
-      <div class="dpad">
-        <button class="dpad-btn" data-cmd="forward"   style="grid-area:up">▲</button>
-        <button class="dpad-btn" data-cmd="left"      style="grid-area:left">◀</button>
-        <button class="dpad-btn dpad-stop" data-cmd="stop" style="grid-area:mid">■</button>
-        <button class="dpad-btn" data-cmd="right"     style="grid-area:right">▶</button>
-        <button class="dpad-btn" data-cmd="backward"  style="grid-area:down">▼</button>
-      </div>
-
-      <!-- Autonomous actions -->
-      <div class="actions">
-        <div class="actions-title">Autonomous</div>
-        <button class="action-btn" data-action="AVANCER">Forward 1m</button>
-        <button class="action-btn" data-action="RECULER">Backward 1m</button>
-        <button class="action-btn" data-action="TOURNER_G">Turn Left 90°</button>
-        <button class="action-btn" data-action="TOURNER_D">Turn Right 90°</button>
-        <button class="action-btn" data-action="CONTOURNER_G">Bypass Left</button>
-        <button class="action-btn" data-action="CONTOURNER_D">Bypass Right</button>
-      </div>
-
-    </section>
+    </div>
 
   </main>
 
