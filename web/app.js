@@ -176,6 +176,82 @@ function drawLidar(points) {
   ctx.stroke();
 }
 
+// ── Gamepad ───────────────────────────────────────────────────────────────────
+
+// Standard gamepad mapping indices
+const GP_RT      = 7;   // R2 / RT  → forward
+const GP_DPAD_L  = 14;  // D-pad left  → turn left
+const GP_DPAD_R  = 15;  // D-pad right → turn right
+
+const GP_DEADZONE = 0.05;  // ignore trigger noise below this value
+
+// Track active D-pad directions and last sent RT value to avoid redundant sends
+const gpActive = { left: false, right: false };
+let gpLastSpeed = 0;
+
+function pollGamepad() {
+  const gamepads = navigator.getGamepads ? navigator.getGamepads() : [];
+  const gp = [...gamepads].find(g => g);   // use first connected gamepad
+
+  if (gp) {
+    const rtValue  = gp.buttons[GP_RT]?.value     ?? 0;
+    const speed    = rtValue > GP_DEADZONE ? rtValue : 0;  // 0.0–1.0
+    const wantLeft  = gp.buttons[GP_DPAD_L]?.pressed ?? false;
+    const wantRight = gp.buttons[GP_DPAD_R]?.pressed ?? false;
+
+    // ── RT: analog forward speed ──────────────────────────────────────────────
+    if (speed !== gpLastSpeed) {
+      gpLastSpeed = speed;
+      if (speed > 0) {
+        // Send y scaled by trigger depth; x from any active D-pad turn
+        const x = gpActive.left ? -1 : gpActive.right ? 1 : 0;
+        send({ cmd: "move", x, y: speed });
+        document.querySelector('.dpad-btn[data-cmd="forward"]')?.classList.add("pressed");
+      } else {
+        send({ cmd: "stop" });
+        document.querySelector('.dpad-btn[data-cmd="forward"]')?.classList.remove("pressed");
+      }
+    }
+
+    // ── D-pad left ────────────────────────────────────────────────────────────
+    if (wantLeft !== gpActive.left) {
+      gpActive.left = wantLeft;
+      document.querySelector('.dpad-btn[data-cmd="left"]')?.classList.toggle("pressed", wantLeft);
+      if (gpLastSpeed > 0) send({ cmd: "move", x: wantLeft ? -1 : 0, y: gpLastSpeed });
+      else if (wantLeft)   send({ cmd: "move", x: -1, y: 0 });
+      else                 send({ cmd: "stop" });
+    }
+
+    // ── D-pad right ───────────────────────────────────────────────────────────
+    if (wantRight !== gpActive.right) {
+      gpActive.right = wantRight;
+      document.querySelector('.dpad-btn[data-cmd="right"]')?.classList.toggle("pressed", wantRight);
+      if (gpLastSpeed > 0) send({ cmd: "move", x: wantRight ? 1 : 0, y: gpLastSpeed });
+      else if (wantRight)  send({ cmd: "move", x: 1, y: 0 });
+      else                 send({ cmd: "stop" });
+    }
+  }
+
+  requestAnimationFrame(pollGamepad);
+}
+
+window.addEventListener("gamepadconnected", e => {
+  console.log(`Gamepad connected: ${e.gamepad.id}`);
+});
+
+window.addEventListener("gamepaddisconnected", e => {
+  console.log(`Gamepad disconnected: ${e.gamepad.id}`);
+  // Release any active gamepad commands
+  Object.keys(gpActive).forEach(k => {
+    if (gpActive[k]) {
+      gpActive[k] = false;
+      document.querySelector(`.dpad-btn[data-cmd="${k}"]`)?.classList.remove("pressed");
+    }
+  });
+  stopMove();
+});
+
 // ── Boot ──────────────────────────────────────────────────────────────────────
 
 connect();
+requestAnimationFrame(pollGamepad);
