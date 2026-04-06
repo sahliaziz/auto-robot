@@ -59,8 +59,6 @@ The Arduino is connected to the RPi over USB. The RPi sends plain-text commands 
 | RPi → Arduino | `RECULER\n` | Drive backward 1 m. |
 | RPi → Arduino | `TOURNER_G\n` | Turn left 90°. |
 | RPi → Arduino | `TOURNER_D\n` | Turn right 90°. |
-| RPi → Arduino | `CONTOURNER_G\n` | Autonomous left bypass sequence. |
-| RPi → Arduino | `CONTOURNER_D\n` | Autonomous right bypass sequence. |
 | Arduino → RPi | `DIST:<cm>\n` | Ultrasonic distance reading, sent every 200 ms. |
 
 **Browser ↔ Raspberry Pi — WebSocket + HTTP**
@@ -123,7 +121,7 @@ Open `arduino/motor_controller/motor_controller.ino` in the Arduino IDE, select 
 ### 2. Install Raspberry Pi dependencies
 
 ```bash
-pip3 install -r raspberry_pi/requirements.txt
+uv sync
 ```
 
 > `picamera2` may already be installed on Raspberry Pi OS. If not, use `sudo apt install python3-picamera2`.
@@ -223,5 +221,3 @@ t = distance * 10;  // increase if the robot undershoots, decrease if it oversho
 // tourner
 t = angle * 10;     // tune until a 90° command turns exactly 90°
 ```
-
-The bypass obstacle width is set by `LARGEUR_DEPASSEMENT` (default 30 cm) and the obstacle detection threshold by `SEUIL_OBSTACLE` (default 20 cm).
