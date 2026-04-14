@@ -9,34 +9,41 @@ import asyncio
 import json
 from contextlib import asynccontextmanager
 
+from ball_detector import BallDetector
 from fastapi import FastAPI, WebSocket, WebSocketDisconnect
 from fastapi.responses import StreamingResponse
 from fastapi.staticfiles import StaticFiles
 
-from serial_comm import SerialComm
 from camera import CameraStreamer
 from lidar import LidarReader
+from serial_comm import SerialComm
 
 # ── Singletons ────────────────────────────────────────────────────────────────
 
 serial_comm = SerialComm()
 camera = CameraStreamer()
 lidar = LidarReader()
+ball_detector = BallDetector(camera)
 
 # ── App lifecycle ─────────────────────────────────────────────────────────────
+
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     lidar.start()
     camera.start()
+    ball_detector.start()
     yield
+    ball_detector.stop()
     lidar.stop()
     camera.stop()
     serial_comm.close()
 
+
 app = FastAPI(lifespan=lifespan)
 
 # ── Camera endpoint ───────────────────────────────────────────────────────────
+
 
 @app.get("/camera")
 def camera_stream():
@@ -45,7 +52,9 @@ def camera_stream():
         media_type="multipart/x-mixed-replace; boundary=frame",
     )
 
+
 # ── WebSocket ─────────────────────────────────────────────────────────────────
+
 
 @app.websocket("/ws")
 async def websocket_endpoint(websocket: WebSocket):
@@ -63,14 +72,16 @@ async def websocket_endpoint(websocket: WebSocket):
 
 
 async def _push_loop(websocket: WebSocket):
-    """Push lidar scans and sensor readings to the browser at ~10 Hz."""
+    """Push lidar scans, sensor readings, and ball detections to the browser at ~10 Hz."""
     try:
         while True:
             scan = lidar.get_scan()
+            balls = ball_detector.get_detections()
             payload = {
                 "type": "telemetry",
                 "lidar": scan,
                 "distance_cm": serial_comm.distance_cm,
+                "balls": balls,
             }
             await websocket.send_text(json.dumps(payload))
             await asyncio.sleep(0.1)
@@ -85,7 +96,7 @@ def _handle(msg: dict):
         # x: turn (-1=left, 1=right), y: throttle (-1=back, 1=fwd)
         y = float(msg.get("y", 0))
         x = float(msg.get("x", 0))
-        left  = (y + x) * 255
+        left = (y + x) * 255
         right = (y - x) * 255
         serial_comm.set_motors(int(left), int(right))
 
@@ -95,6 +106,7 @@ def _handle(msg: dict):
     elif cmd == "action":
         # Named autonomous commands: AVANCER, RECULER, TOURNER_G, etc.
         serial_comm.send(msg.get("name", "STOP"))
+
 
 # ── Static files (web UI) — mounted last so API routes take priority ──────────
 

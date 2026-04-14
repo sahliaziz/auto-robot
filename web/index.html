@@ -1,101 +1,133 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Robot Control</title>
-  <link rel="stylesheet" href="style.css">
-</head>
-<body>
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>Robot Control</title>
+        <link rel="stylesheet" href="style.css" />
+    </head>
+    <body>
+        <header>
+            <div class="logo">
+                <div class="logo-mark">RC</div>
+                <h1>Robot Control</h1>
+            </div>
+            <div class="header-meta">
+                <div id="balls" class="badge">BALLS&nbsp;&nbsp;--</div>
+                <div id="distance" class="badge">
+                    SONAR&nbsp;&nbsp;--&nbsp;cm
+                </div>
+                <div id="status" class="status disconnected">
+                    <span class="status-dot"></span>
+                    <span id="status-label">Disconnected</span>
+                </div>
+            </div>
+        </header>
 
-  <header>
-    <div class="logo">
-      <div class="logo-mark">RC</div>
-      <h1>Robot Control</h1>
-    </div>
-    <div class="header-meta">
-      <div id="distance" class="badge">SONAR&nbsp;&nbsp;--&nbsp;cm</div>
-      <div id="status" class="status disconnected">
-        <span class="status-dot"></span>
-        <span id="status-label">Disconnected</span>
-      </div>
-    </div>
-  </header>
+        <aside class="sidebar">
+            <!-- Manual D-pad -->
+            <div class="panel">
+                <div class="panel-header">
+                    <span class="panel-label">Manual Drive</span>
+                </div>
+                <div class="dpad-wrap">
+                    <div class="dpad">
+                        <button
+                            class="dpad-btn"
+                            data-cmd="forward"
+                            style="grid-area: up"
+                        >
+                            ▲
+                        </button>
+                        <button
+                            class="dpad-btn"
+                            data-cmd="left"
+                            style="grid-area: left"
+                        >
+                            ◀
+                        </button>
+                        <button
+                            class="dpad-btn dpad-stop"
+                            data-cmd="stop"
+                            style="grid-area: mid"
+                        >
+                            STOP
+                        </button>
+                        <button
+                            class="dpad-btn"
+                            data-cmd="right"
+                            style="grid-area: right"
+                        >
+                            ▶
+                        </button>
+                        <button
+                            class="dpad-btn"
+                            data-cmd="backward"
+                            style="grid-area: down"
+                        >
+                            ▼
+                        </button>
+                    </div>
+                    <div class="dpad-meta">WASD / arrow keys supported</div>
+                </div>
+            </div>
 
-  <aside class="sidebar">
+            <!-- Autonomous actions -->
+            <div class="panel">
+                <div class="panel-header">
+                    <span class="panel-label">Autonomous</span>
+                </div>
+                <div class="panel-body">
+                    <div class="action-list">
+                        <button class="action-btn" data-action="AVANCER">
+                            <span class="action-icon">↑</span> Forward 1 m
+                        </button>
+                        <button class="action-btn" data-action="RECULER">
+                            <span class="action-icon">↓</span> Backward 1 m
+                        </button>
+                        <button class="action-btn" data-action="TOURNER_G">
+                            <span class="action-icon">↺</span> Turn Left 90°
+                        </button>
+                        <button class="action-btn" data-action="TOURNER_D">
+                            <span class="action-icon">↻</span> Turn Right 90°
+                        </button>
+                        <button class="action-btn" data-action="CONTOURNER_G">
+                            <span class="action-icon">⤺</span> Bypass Left
+                        </button>
+                        <button class="action-btn" data-action="CONTOURNER_D">
+                            <span class="action-icon">⤻</span> Bypass Right
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </aside>
 
-    <!-- Manual D-pad -->
-    <div class="panel">
-      <div class="panel-header">
-        <span class="panel-label">Manual Drive</span>
-      </div>
-      <div class="dpad-wrap">
-        <div class="dpad">
-          <button class="dpad-btn" data-cmd="forward"  style="grid-area:up"   >▲</button>
-          <button class="dpad-btn" data-cmd="left"     style="grid-area:left" >◀</button>
-          <button class="dpad-btn dpad-stop" data-cmd="stop" style="grid-area:mid">STOP</button>
-          <button class="dpad-btn" data-cmd="right"    style="grid-area:right">▶</button>
-          <button class="dpad-btn" data-cmd="backward" style="grid-area:down" >▼</button>
-        </div>
-        <div class="dpad-meta">WASD / arrow keys supported</div>
-      </div>
-    </div>
+        <main>
+            <div class="feed-panel">
+                <div class="feed-header">
+                    <span class="feed-title">Camera</span>
+                    <span class="feed-pill">LIVE</span>
+                </div>
+                <div class="feed-body">
+                    <!-- camera-wrap lets the overlay canvas sit exactly on top of the img -->
+                    <div class="camera-wrap">
+                        <img id="camera-feed" src="/camera" alt="Camera feed" />
+                        <canvas id="ball-canvas"></canvas>
+                    </div>
+                </div>
+            </div>
 
-    <!-- Autonomous actions -->
-    <div class="panel">
-      <div class="panel-header">
-        <span class="panel-label">Autonomous</span>
-      </div>
-      <div class="panel-body">
-        <div class="action-list">
-          <button class="action-btn" data-action="AVANCER">
-            <span class="action-icon">↑</span> Forward 1 m
-          </button>
-          <button class="action-btn" data-action="RECULER">
-            <span class="action-icon">↓</span> Backward 1 m
-          </button>
-          <button class="action-btn" data-action="TOURNER_G">
-            <span class="action-icon">↺</span> Turn Left 90°
-          </button>
-          <button class="action-btn" data-action="TOURNER_D">
-            <span class="action-icon">↻</span> Turn Right 90°
-          </button>
-          <button class="action-btn" data-action="CONTOURNER_G">
-            <span class="action-icon">⤺</span> Bypass Left
-          </button>
-          <button class="action-btn" data-action="CONTOURNER_D">
-            <span class="action-icon">⤻</span> Bypass Right
-          </button>
-        </div>
-      </div>
-    </div>
+            <div class="feed-panel">
+                <div class="feed-header">
+                    <span class="feed-title">Lidar</span>
+                    <span class="feed-pill">LIVE</span>
+                </div>
+                <div class="feed-body">
+                    <canvas id="lidar-canvas" width="480" height="480"></canvas>
+                </div>
+            </div>
+        </main>
 
-  </aside>
-
-  <main>
-
-    <div class="feed-panel">
-      <div class="feed-header">
-        <span class="feed-title">Camera</span>
-        <span class="feed-pill">LIVE</span>
-      </div>
-      <div class="feed-body">
-        <img id="camera-feed" src="/camera" alt="Camera feed">
-      </div>
-    </div>
-
-    <div class="feed-panel">
-      <div class="feed-header">
-        <span class="feed-title">Lidar</span>
-        <span class="feed-pill">LIVE</span>
-      </div>
-      <div class="feed-body">
-        <canvas id="lidar-canvas" width="480" height="480"></canvas>
-      </div>
-    </div>
-
-  </main>
-
-  <script src="app.js"></script>
-</body>
+        <script src="app.js"></script>
+    </body>
 </html>
