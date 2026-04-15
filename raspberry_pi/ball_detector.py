@@ -203,6 +203,7 @@ class BallDetector:
             cx, cy, radius = int(cx), int(cy), int(radius)
 
             x, y, w, h = cv2.boundingRect(cnt)
+            x, y, w, h = int(x), int(y), int(w), int(h)
             rgb = _mean_colour(frame, mask, cnt)
             nom = _colour_name(rgb)
 

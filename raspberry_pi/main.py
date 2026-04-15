@@ -9,11 +9,11 @@ import asyncio
 import json
 from contextlib import asynccontextmanager
 
-from ball_detector import BallDetector
 from fastapi import FastAPI, WebSocket, WebSocketDisconnect
 from fastapi.responses import StreamingResponse
 from fastapi.staticfiles import StaticFiles
 
+from ball_detector import BallDetector
 from camera import CameraStreamer
 from lidar import LidarReader
 from serial_comm import SerialComm
@@ -75,15 +75,18 @@ async def _push_loop(websocket: WebSocket):
     """Push lidar scans, sensor readings, and ball detections to the browser at ~10 Hz."""
     try:
         while True:
-            scan = lidar.get_scan()
-            balls = ball_detector.get_detections()
-            payload = {
-                "type": "telemetry",
-                "lidar": scan,
-                "distance_cm": serial_comm.distance_cm,
-                "balls": balls,
-            }
-            await websocket.send_text(json.dumps(payload))
+            try:
+                scan = lidar.get_scan()
+                balls = ball_detector.get_detections()
+                payload = {
+                    "type": "telemetry",
+                    "lidar": scan,
+                    "distance_cm": serial_comm.distance_cm,
+                    "balls": balls,
+                }
+                await websocket.send_text(json.dumps(payload))
+            except Exception as exc:
+                print(f"[ws] Push error (skipping frame): {exc}")
             await asyncio.sleep(0.1)
     except Exception:
         pass
