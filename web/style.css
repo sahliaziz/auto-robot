@@ -40,22 +40,6 @@ body {
         "sidebar main";
 }
 
-/* ── Scanline texture overlay ──────────────────────────────────────────── */
-body::after {
-    content: "";
-    position: fixed;
-    inset: 0;
-    background: repeating-linear-gradient(
-        0deg,
-        transparent,
-        transparent 2px,
-        rgba(0, 0, 0, 0.07) 2px,
-        rgba(0, 0, 0, 0.07) 4px
-    );
-    pointer-events: none;
-    z-index: 9999;
-}
-
 /* ── Header ────────────────────────────────────────────────────────────── */
 header {
     grid-area: header;
@@ -348,16 +332,6 @@ main {
     overflow: hidden;
 }
 
-/* Corner bracket decoration */
-.feed-panel::before,
-.feed-panel::after {
-    content: "";
-    position: absolute;
-    width: 14px;
-    height: 14px;
-    z-index: 2;
-    pointer-events: none;
-}
 .feed-panel::before {
     top: 8px;
     left: 8px;
